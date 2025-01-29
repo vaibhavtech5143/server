@@ -2,7 +2,9 @@
     import Vendor from '../models/Vendors.js';
     import User from '../models/User.js'; // Assuming the User model is imported correctly
     import Supervisor from '../models/Supervisors.js'; 
-
+    import cloudinary from '../utils.js'
+    import upload from '../utils.js'
+    import fs from 'fs'
 
     // Used By Only Supervisor For Assigning Task and updating status of the task that is assigned/approved/ rejected
     export const assignVendor = async (req, res) => {
@@ -152,12 +154,15 @@
 // Used By Only Resident or User  For Creating  Task
 export const createTask = async (req, res) => {
   try {
+    console.log(
+     req.user.id 
+    ); 
     const newTask = await Task.create({
       ...req.body,
       resident: req.user.id, // The resident who created the task
       supervisor: null// Supervisor assigned to the task
     });
-
+    // console.log(" wasd ",newTask);
     res.status(201).json({
       status: 'success',
       data: {
@@ -165,6 +170,8 @@ export const createTask = async (req, res) => {
       }
     });
   } catch (err) {
+    console.log(err);
+    
     res.status(400).json({
       status: 'fail',
       message: err.message
@@ -349,3 +356,54 @@ export const addRating = async (req, res) => {
     });
   }
 };  
+
+
+export const addDaiyWorkingByVendor = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    const description = req.body.description;
+
+    if (!task) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Task not found'
+      });
+    }
+
+    if (task.vendor.toString() !== req.user._id.toString()) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Vendor does not match'
+      });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path);
+    console.log("Uploaded Image URL:", result.secure_url);
+
+    if (!task.workProofs) {
+      task.workProofs = [];
+    }
+
+    task.workProofs.push({
+      description: description,
+      imageUrl: result.secure_url,
+      uploadedAt: new Date(),
+    });
+
+    await task.save();  
+
+    fs.unlinkSync(req.file.path);
+
+    res.status(200).json({
+      message: "Image uploaded successfully!",
+      cloudinaryUrl: result.secure_url,
+    });
+
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};

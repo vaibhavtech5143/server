@@ -6,7 +6,6 @@ import Vendor from "../models/Vendors.js";
 export const protect = async (req, res, next) => {
   try {
     let token;
-
     // Extract token from Authorization header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
@@ -54,7 +53,6 @@ export const protect = async (req, res, next) => {
     }
 
   
-
     // Check if the user exists
     if (!user) {
       return res.status(401).json({
@@ -76,9 +74,15 @@ export const protect = async (req, res, next) => {
 };
 
 export const restrictTo = (...roles) => {
-  return (req, res, next) => {
+  // console.log(...roles);
   
+  return (req, res, next) => {
+    console.log("auth  82 ",req.user);
+
+    // console.log(...roles, " was ", req.user.role);
     if (!roles.includes(req.user.role)) {
+      
+
       return res.status(403).json({
         status: 'fail',
         message: 'You do not have permission to perform this action'
