@@ -359,8 +359,11 @@ export const addRating = async (req, res) => {
 
 export const addDaiyWorkingByVendor = async (req, res) => {
   try {
+    const allowedStatuses = ['Pending', 'Started', 'Halfway', 'Almost Done', 'Completed'];
     const task = await Task.findById(req.params.id);
     const description = req.body.description;
+    const status =req.body.status;
+
 
     if (!task) {
       return res.status(404).json({
@@ -368,6 +371,13 @@ export const addDaiyWorkingByVendor = async (req, res) => {
         message: 'Task not found'
       });
     }
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        status: 'fail',
+        message: `Invalid status. Allowed statuses: ${allowedStatuses.join(', ')}`,
+      });
+    }
+
 
     if (task.vendor.toString() !== req.user._id.toString()) {
       return res.status(404).json({
@@ -388,6 +398,14 @@ export const addDaiyWorkingByVendor = async (req, res) => {
       imageUrl: result.secure_url,
       uploadedAt: new Date(),
     });
+
+    if (status) {
+      task.progress.push({
+        status,
+        description,
+        updatedAt: new Date(),
+      });
+    }
 
     await task.save();  
 
