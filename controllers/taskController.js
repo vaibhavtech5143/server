@@ -309,6 +309,9 @@ export const addProgress = async (req, res) => {
 };
 
 
+
+export const 
+
 //can be used by resident or user only
 export const addRating = async (req, res) => {
   try {
@@ -349,3 +352,5 @@ export const addRating = async (req, res) => {
     });
   }
 };  
+
+

@@ -32,10 +32,15 @@ const taskSchema = new mongoose.Schema({
     imageUrl: String,
     uploadedAt: { type: Date, default: Date.now }
   }],
-  materialsUsed: [{
-    material: String,
-    cost: Number
-  }],
+  finalBillMaterialUsed: {
+    materials: [
+      {
+        material: { type: String, required: true },
+        cost: { type: Number, required: true }
+      }
+    ],
+    totalCost: { type: Number, default: 0 } // Will be calculated automatically
+  },
   progress: [{
     status: { type: String, enum: ['Pending', 'Started', 'Halfway', 'Almost Done', 'Completed'] },
     description: String,
@@ -53,4 +58,27 @@ const taskSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Pre-save hook to calculate totalCost for finalBillMaterialUsed
+taskSchema.pre('save', function (next) {
+  if (this.finalBillMaterialUsed && this.finalBillMaterialUsed.materials) {
+    this.finalBillMaterialUsed.totalCost = this.finalBillMaterialUsed.materials.reduce(
+      (sum, item) => sum + item.cost,
+      0
+    );
+  }
+  next();
+});
+
+// Middleware to handle updates and recalculate totalCost
+taskSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  if (update && update.finalBillMaterialUsed && update.finalBillMaterialUsed.materials) {
+    const totalCost = update.finalBillMaterialUsed.materials.reduce(
+      (sum, item) => sum + item.cost,
+      0
+    );
+    update.finalBillMaterialUsed.totalCost = totalCost;
+  }
+  next();
+});
 export default mongoose.model('Task', taskSchema);

@@ -33,4 +33,7 @@ router.post('/:id/progress', restrictTo('vendor'), addProgress);
 // Ratings restricted to residents
 router.post('/:id/rating', restrictTo('resident'), addRating);
 
+
+
+
 export default router;
