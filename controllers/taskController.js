@@ -315,7 +315,6 @@ export const addProgress = async (req, res) => {
   }
 };
 
-
 //can be used by resident or user only
 export const addRating = async (req, res) => {
   try {

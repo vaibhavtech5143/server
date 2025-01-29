@@ -49,4 +49,6 @@ router.post('/:id/rating', restrictTo('resident'), addRating);
 
 router.post('/vendor/upload/:id',restrictTo('vendor'),upload.single("image"),addDaiyWorkingByVendor)
 
+
+
 export default router;
