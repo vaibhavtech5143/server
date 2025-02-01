@@ -2,7 +2,6 @@ import cloudinary from 'cloudinary'
 import multer from 'multer'
 import dotenv from 'dotenv';
 dotenv.config()
-console.log("innn ", process.env.cloudinaryApiKey);
 
  cloudinary.config({
     cloud_name: process.env.cloudinaryCloudName,
