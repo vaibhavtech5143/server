@@ -30,7 +30,10 @@ const taskSchema = new mongoose.Schema({
   workProofs: [{
     description: String,
     imageUrl: String,
-    uploadedAt: { type: Date, default: Date.now }
+    geoLocation: { 
+      type: { type: String , default: 'Point' }, 
+      coordinates: [Number] },
+      uploadedAt: { type: Date, default: Date.now }
   }],
   finalBillMaterialUsed: {
     materials: [

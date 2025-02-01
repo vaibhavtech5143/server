@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const signToken = (user) => {
-  const { _id, name, email, role, address, mobile, repairHistory, feedbacks, createdAt } = user;
+  const { _id, name, email, role, address, mobile} = user;
   return jwt.sign(
     {
       id: _id,
@@ -10,10 +10,7 @@ const signToken = (user) => {
       email,
       role,
       address,
-      mobile,
-      repairHistory,
-      feedbacks,
-      createdAt
+      mobile
     },
     process.env.JWT_SECRET,
     {

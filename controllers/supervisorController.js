@@ -4,20 +4,13 @@ import Supervisors from '../models/Supervisors.js';
 
 // Helper function to sign JWT
 const signToken = (supervisor) => {
-  const { _id, name, email, role, assignedBuildings, pendingRequests, approvedTasks, rejectedTasks, assignedTasks, overdueTasks, alerts } = supervisor;
+  const { _id, name, email} = supervisor;
   return jwt.sign(
     {
       id: _id,
       name,
       email,
-      role: supervisor.role, // Dynamic role
-      assignedBuildings,
-      pendingRequests,
-      approvedTasks,
-      rejectedTasks,
-      assignedTasks,
-      overdueTasks,
-      alerts
+      role: supervisor.role, // Dynamic role assignment
     },
     process.env.JWT_SECRET,
     {

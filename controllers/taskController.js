@@ -154,9 +154,7 @@
 // Used By Only Resident or User  For Creating  Task
 export const createTask = async (req, res) => {
   try {
-    console.log(
-     req.user.id 
-    ); 
+   
     const newTask = await Task.create({
       ...req.body,
       resident: req.user.id, // The resident who created the task
@@ -282,7 +280,7 @@ export const updateTask = async (req, res) => {
 };
 
 
-/////  used by vendor
+//  used by vendor
 export const addProgress = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -363,6 +361,8 @@ export const addDaiyWorkingByVendor = async (req, res) => {
     const task = await Task.findById(req.params.id);
     const description = req.body.description;
     const status =req.body.status;
+    const latitude = req.body.latitude;
+    const longitude = req.body.longitude;
 
 
     if (!task) {
@@ -396,6 +396,10 @@ export const addDaiyWorkingByVendor = async (req, res) => {
     task.workProofs.push({
       description: description,
       imageUrl: result.secure_url,
+      geoLocation: {
+        type: 'Point',  // GeoJSON format: 'Point' type for location
+        coordinates: [longitude, latitude]  // [longitude, latitude] format
+      },
       uploadedAt: new Date(),
     });
 

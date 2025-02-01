@@ -77,12 +77,10 @@ export const restrictTo = (...roles) => {
   // console.log(...roles);
   
   return (req, res, next) => {
-    console.log("auth  82 ",req.user);
+    console.log("Role Received",req.user);
 
     // console.log(...roles, " was ", req.user.role);
-    if (!roles.includes(req.user.role)) {
-      
-
+    if (!roles.includes(req.user.role)) {      
       return res.status(403).json({
         status: 'fail',
         message: 'You do not have permission to perform this action'
