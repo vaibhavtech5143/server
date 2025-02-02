@@ -23,7 +23,7 @@
         }
     
         // Restrict task modification to the supervisor who assigned it
-        if (task.supervisor && task.supervisor._id.toString() !== supervisorId) {
+        if (task.supervisor && task.supervisor._id !== supervisorId) {
           return res.status(403).json({ message: 'You are not authorized to modify this task.' });
         }
     
@@ -67,7 +67,7 @@
     
             // Update supervisor's assigned and approved task lists
             supervisor.assignedTasks = supervisor.assignedTasks.filter(
-              (taskId) => taskId.toString() !== task._id.toString()
+              (taskId) => taskId !== task._id
             );
             supervisor.approvedTasks.push(task._id);
     
@@ -76,7 +76,7 @@
               const vendor = await Vendor.findById(task.vendor);
               if (vendor) {
                 vendor.activeTasks = vendor.activeTasks.filter(
-                  (taskId) => taskId.toString() !== task._id.toString()
+                  (taskId) => taskId !== task._id
                 );
                 vendor.completedTasks.push(task._id);
                 await vendor.save();
@@ -111,7 +111,7 @@
     
             // Update supervisor's assigned and rejected task lists
             supervisor.assignedTasks = supervisor.assignedTasks.filter(
-              (taskId) => taskId.toString() !== task._id.toString()
+              (taskId) => taskId !== task._id
             );
             supervisor.rejectedTasks.push(task._id);
     
@@ -120,7 +120,7 @@
               const vendor = await Vendor.findById(task.vendor);
               if (vendor) {
                 vendor.activeTasks = vendor.activeTasks.filter(
-                  (taskId) => taskId.toString() !== task._id.toString()
+                  (taskId) => taskId !== task._id
                 );
                 vendor.rejectedTasks.push(task._id);
                 await vendor.save();
@@ -325,7 +325,7 @@ export const addRating = async (req, res) => {
       });
     }
 
-    if (task.resident.toString() !== req.user.id) {
+    if (task.resident !== req.user.id) {
       return res.status(403).json({
         status: 'fail',
         message: 'You can only rate tasks that you created'
@@ -355,7 +355,7 @@ export const addRating = async (req, res) => {
 };  
 
 
-export const addDaiyWorkingByVendor = async (req, res) => {
+export const addDailyWorkingByVendor = async (req, res) => {
   try {
     const allowedStatuses = ['Pending', 'Started', 'Halfway', 'Almost Done', 'Completed'];
     const task = await Task.findById(req.params.id);
@@ -379,7 +379,7 @@ export const addDaiyWorkingByVendor = async (req, res) => {
     }
 
 
-    if (task.vendor.toString() !== req.user._id.toString()) {
+    if (String(task.vendor) !== String(req.user._id)) {
       return res.status(404).json({
         status: 'fail',
         message: 'Vendor does not match'
@@ -412,6 +412,7 @@ export const addDaiyWorkingByVendor = async (req, res) => {
     }
 
     await task.save();  
+console.log("REQUEST FILE SUCCESSFUL PATH:", req.file.path);
 
     fs.unlinkSync(req.file.path);
 

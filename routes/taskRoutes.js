@@ -7,10 +7,11 @@ import {
   addProgress,
   addRating,
   getTaskById,
-  addDaiyWorkingByVendor
+  addDailyWorkingByVendor
 } from '../controllers/taskController.js';
 import { protect, restrictTo } from '../middleware/auth.js';
 import multer from 'multer';
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, "uploads/"); 
@@ -47,7 +48,7 @@ router.post('/:id/progress', restrictTo('vendor'), addProgress);
 // Ratings restricted to residents
 router.post('/:id/rating', restrictTo('resident'), addRating);
 
-router.post('/vendor/upload/:id',restrictTo('vendor'),upload.single("image"),addDaiyWorkingByVendor)
+router.post('/vendor/upload/:id',restrictTo('vendor'),upload.single("image"),addDailyWorkingByVendor)
 
 
 
