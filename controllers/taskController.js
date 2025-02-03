@@ -385,7 +385,9 @@ export const addDailyWorkingByVendor = async (req, res) => {
         message: 'Vendor does not match'
       });
     }
-
+    console.log(req.file);
+    
+    if(req.file){
     const result = await cloudinary.uploader.upload(req.file.path);
     console.log("Uploaded Image URL:", result.secure_url);
 
@@ -420,6 +422,13 @@ console.log("REQUEST FILE SUCCESSFUL PATH:", req.file.path);
       message: "Image uploaded successfully!",
       cloudinaryUrl: result.secure_url,
     });
+  }else{
+      res.status(500).json({
+      status: "Error",
+      message: "Please attach a file",
+    });
+
+  }
 
   } catch (error) {
     console.error("Error:", error.message);
